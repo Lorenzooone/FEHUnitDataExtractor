@@ -1,4 +1,7 @@
+#include<string>
 #include"HSDArc.h"
+
+using namespace std;
 
 const int offset = 0x20; //HSDArc's header data
 
@@ -35,16 +38,15 @@ hsdarc_buffer get_elements(char data[])
 	return buf;
 }
 
-unsigned char* GetStringXorred(long long int ptr, char data[], const int Xor[], int XorSize)
+string GetStringXorred(long long int ptr, char data[], const int Xor[], int XorSize)
 {
     int size=0;
 	for(int i=0; data[ptr+i]!=0; i++)
         size++;
-	unsigned char* String = new unsigned char[size+1];
+	string String;
 	for(int i=0; i<size; i++)
     {
-		String[i] = data[ptr+i] ^ Xor[i%XorSize];
+		String += data[ptr+i] ^ Xor[i%XorSize];
 	}
-	String[size]='\0';
 	return String;
 }
