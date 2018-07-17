@@ -37,7 +37,7 @@ struct hero_definition {
 
 int GetHero(hsdarc_buffer buf, int num);
 stats_tuple GetHeroStats(long long int ptr, char data[], const int Xor[], int addition);
-unsigned char* actOnData(hsdarc_buffer buf, int num, const int Xor[], int XorSize, unsigned char* (*a)(long long int ptr, char data[], const int Xor[], int XorSize));
+std::string actOnData(hsdarc_buffer buf, int num, const int Xor[], int XorSize, std::string (*a)(long long int ptr, char data[], const int Xor[], int XorSize));
 stats_tuple GetHeroGrowths(long long int ptr, char data[], const int Xor[]);
 unsigned char GetFirstChar(hsdarc_buffer buf, int num);
-unsigned char* PrintStats(stats_tuple Stats);
+std::string PrintStats(stats_tuple Stats);
