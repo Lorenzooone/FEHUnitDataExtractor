@@ -10,11 +10,11 @@ struct hero_info {
   bool permanent_hero;
   unsigned char base_vector_id;
   bool refresher;
-  unsigned char _dummy1;
+  unsigned char dummy1;
 };
 
 struct stats_tuple {
-  short int hp, atk, spd, def, res, _dummy1, _dummy2, _dummy3;
+  short int hp, atk, spd, def, res, dummy1, dummy2, dummy3;
 };
 
 struct legendary_info {
@@ -36,7 +36,8 @@ struct hero_definition {
 };
 
 int GetHero(hsdarc_buffer buf, int num);
-unsigned char* GetHeroStats(long long int ptr, char data[], const int Xor[], int XorSize, int addition);
+stats_tuple GetHeroStats(long long int ptr, char data[], const int Xor[], int addition);
 unsigned char* actOnData(hsdarc_buffer buf, int num, const int Xor[], int XorSize, unsigned char* (*a)(long long int ptr, char data[], const int Xor[], int XorSize));
-unsigned char* GetHeroGrowths(long long int ptr, char data[], const int Xor[], int XorSize);
+stats_tuple GetHeroGrowths(long long int ptr, char data[], const int Xor[]);
 unsigned char GetFirstChar(hsdarc_buffer buf, int num);
+unsigned char* PrintStats(stats_tuple Stats);
