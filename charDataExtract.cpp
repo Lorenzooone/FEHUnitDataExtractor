@@ -1,6 +1,9 @@
 #include<iostream>
 #include"HSDArc.h"
 #include"charDataExtract.h"
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    #include <Windows.h>
+#endif
 using namespace std;
 
 //Const declarations
@@ -111,6 +114,9 @@ unsigned char* GetSkillXor(hsdarc_buffer buf, long long int ptr, const int Xor[]
 
 int GetHero(hsdarc_buffer buf, int num)
 {
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
     unsigned char* strbuf = actOnData(buf, num++, Xor_Str, Xor_Str_Size, GetStringXorred);
     cout<<"Internal Identifier: "<<strbuf<<endl;
     delete(strbuf);
@@ -168,7 +174,7 @@ int GetHero(hsdarc_buffer buf, int num)
     strbuf = PrintStats(enemy_stats);
     cout<<"Enemy Stats: "<<strbuf<<endl;
     delete(strbuf);
-    char multiple='\0';
+    char multiple=' ';
     int fnum=num+1;
     for(int i=0; i<5; i++)
     {
