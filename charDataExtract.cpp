@@ -1,5 +1,4 @@
 #include<iostream>
-#include<string>
 #include"HSDArc.h"
 #include"charDataExtract.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -99,14 +98,14 @@ stats_tuple GetLvl40Stats(stats_tuple lvl1, stats_tuple growths)
 	return stats;
 }
 
-string actOnData(hsdarc_buffer buf, int num, const int Xor[], int XorSize, string (*a)(long long int ptr, char data[], const int Xor[], int XorSize))
+unsigned char* actOnData(hsdarc_buffer buf, int num, const int Xor[], int XorSize, unsigned char* (*a)(long long int ptr, char data[], const int Xor[], int XorSize))
 {
 	if(read_data_long(buf.data, buf.ptr_list[num], 8) == 0)
         return a(buf.ptr_list[num] + 8, buf.data, Xor, XorSize);
 	return a(read_data_long(buf.data, buf.ptr_list[num], 8) + 0x20, buf.data, Xor_Str, Xor_Str_Size);
 }
 
-string GetSkillXor(hsdarc_buffer buf, long long int ptr, const int Xor[], int XorSize, string (*a)(long long int ptr, char data[], const int Xor[], int XorSize))
+unsigned char* GetSkillXor(hsdarc_buffer buf, long long int ptr, const int Xor[], int XorSize, unsigned char* (*a)(long long int ptr, char data[], const int Xor[], int XorSize))
 {
 	if(read_data_long(buf.data, ptr, 8) == 0)
         return a(ptr, buf.data, Xor, XorSize);
@@ -118,20 +117,25 @@ int GetHero(hsdarc_buffer buf, int num)
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
         SetConsoleOutputCP(CP_UTF8);
     #endif
-    string strbuf = actOnData(buf, num++, Xor_Str, Xor_Str_Size, GetStringXorred);
+    unsigned char* strbuf = actOnData(buf, num++, Xor_Str, Xor_Str_Size, GetStringXorred);
     cout<<"Internal Identifier: "<<strbuf<<endl;
+    delete(strbuf);
     strbuf = actOnData(buf, num++, Xor_Str, Xor_Str_Size, GetStringXorred);
     cout<<"Romanized Identifier: "<<strbuf<<endl;
+    delete(strbuf);
     strbuf = actOnData(buf, num++, Xor_Str, Xor_Str_Size, GetStringXorred);
     cout<<"Face Folder: "<<strbuf<<endl;
+    delete(strbuf);
     strbuf = actOnData(buf, num, Xor_Str, Xor_Str_Size, GetStringXorred);
     cout<<"Face Folder no.2: "<<strbuf<<endl;
+    delete(strbuf);
     int leg = read_data_long(buf.data, buf.ptr_list[num] + 0x8, 8);
     if(leg != 0) 
     {
         stats_tuple legendary_buffes = GetHeroStats(leg + 0x20, buf.data, Xor_Stats, 0);
         strbuf = PrintStats(legendary_buffes);
         cout<<"Legendary buffes: "<<strbuf<<endl;
+        delete(strbuf);
         leg = buf.data[leg + 0x30] ^ Xor_Element[0];
         cout<<"Element: "<<Legendary[leg-1]<<endl;
     }
@@ -157,15 +161,19 @@ int GetHero(hsdarc_buffer buf, int num)
     stats_tuple base_stats = GetHeroStats(buf.ptr_list[num] + 0x30, buf.data, Xor_Stats, 1);
     strbuf = PrintStats(base_stats);
     cout<<"5 Stars Level 1 Stats: "<<strbuf<<endl;
+    delete(strbuf);
     stats_tuple hero_growths = GetHeroGrowths(buf.ptr_list[num] + 0x40, buf.data, Xor_Stats);
     strbuf = PrintStats(hero_growths);
     cout<<"Growth Points: "<<strbuf<<endl;
+    delete(strbuf);
 	stats_tuple level40stats = GetLvl40Stats(base_stats, hero_growths);
     strbuf = PrintStats(level40stats);
     cout<<"5 Stars Level 40 Stats: "<<strbuf<<endl;
+    delete(strbuf);
     stats_tuple enemy_stats = GetHeroStats(buf.ptr_list[num] + 0x50, buf.data, Xor_Stats, 0);
     strbuf = PrintStats(enemy_stats);
     cout<<"Enemy Stats: "<<strbuf<<endl;
+    delete(strbuf);
     char multiple=' ';
     int fnum=num+1;
     for(int i=0; i<5; i++)
@@ -177,6 +185,7 @@ int GetHero(hsdarc_buffer buf, int num)
             cout<<Skills[j]<<strbuf<<endl;
             if(strbuf[0]!='\0')
                 fnum++;
+            delete(strbuf);
         }
         multiple='s';
     }
@@ -211,32 +220,34 @@ stats_tuple GetHeroGrowths(long long int ptr, char data[], const int Xor[])
 	return stats;
 }
 
-string readShortInt(short int tmp, string String)
+int readShortInt(short int tmp, unsigned char* String, int pos)
 {
 		if(tmp > 10000)
-			String+=((tmp/10000)%10) + '0';
+			String[pos++]=((tmp/10000)%10) + '0';
 		if(tmp > 1000)
-			String+=((tmp/1000)%10) + '0';
+			String[pos++]=((tmp/1000)%10) + '0';
 		if(tmp > 100)
-			String+=((tmp/100)%10) + '0';
+			String[pos++]=((tmp/100)%10) + '0';
 		if(tmp > 10)
-			String+=((tmp/10)%10) + '0';
-		String+=(tmp%10) + '0';
-		return String;
+			String[pos++]=((tmp/10)%10) + '0';
+		String[pos++]=(tmp%10) + '0';
+		return pos;
 }
 
-string PrintStats(stats_tuple Stats)
+unsigned char* PrintStats(stats_tuple Stats)
 {
-	string String;
-	String = readShortInt(Stats.hp, String);
-	String += '|';
-	String = readShortInt(Stats.atk, String);
-	String += '|';
-	String = readShortInt(Stats.spd, String);
-	String += '|';
-	String = readShortInt(Stats.def, String);
-	String += '|';
-	String = readShortInt(Stats.res, String);
+	unsigned char* String = new unsigned char[(0x5*6)+1];
+	int pos=0;
+	pos = readShortInt(Stats.hp, String, pos);
+	String[pos++] = '|';
+	pos = readShortInt(Stats.atk, String, pos);
+	String[pos++] = '|';
+	pos = readShortInt(Stats.spd, String, pos);
+	String[pos++] = '|';
+	pos = readShortInt(Stats.def, String, pos);
+	String[pos++] = '|';
+	pos = readShortInt(Stats.res, String, pos);
+	String[pos]='\0';
 	return String;
 }
 

@@ -20,4 +20,4 @@ struct XorArray
 int read_data(char data[], int position, int size);
 long long int read_data_long(char data[], long long int position, int size);
 hsdarc_buffer get_elements(char data[]);
-std::string GetStringXorred(long long int ptr, char data[], const int Xor[], int XorSize);
+unsigned char* GetStringXorred(long long int ptr, char data[], const int Xor[], int XorSize);
