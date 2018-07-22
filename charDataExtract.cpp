@@ -8,13 +8,9 @@
 using namespace std;
 
 //Const declarations
-const int Xor_Str[]  = {
-  0x81, 0x00, 0x80, 0xA4, 0x5A, 0x16, 0x6F, 0x78,
-  0x57, 0x81, 0x2D, 0xF7, 0xFC, 0x66, 0x0F, 0x27,
-  0x75, 0x35, 0xB4, 0x34, 0x10, 0xEE, 0xA2, 0xDB,
-  0xCC, 0xE3, 0x35, 0x99, 0x43, 0x48, 0xD2, 0xBB,
-  0x93, 0xC1};
-const int Xor_Str_Size = 34;
+const int Xor_Unknown[] = {
+  0x64, 0xB7, 0x49, 0x16, 0xBD, 0x18, 0x3E, 0x42};
+const int Xor_Unknown_Size = 8;
 const int Xor_Stats[] = {
   0x32, 0xD6, 0xA0, 0x14, 0x5E, 0xA5, 0x66, 0x85,
   0xE5, 0xAE, 0x57, 0x64, 0x1A, 0x29, 0x59, 0x05};
@@ -80,13 +76,6 @@ const unsigned char Series[][105] = {"Heroes", "Shadow Dragon and the Blade of L
   "Gaiden / Echoes", "Genealogy of the Holy War", "Thracia 776", "The Binding Blade", "The Blazing Blade", "The Sacred Stones", "Path of Radiance", "Radiant Dawn", "Awakening", "Fates"};
 
 //--------------------------------
-int read_data_Xorred(char data[], int position, int size, const int Xor[], int XorPos)
-{
-    int read=0;
-	for(int i=0; i<size; i++)
-		read+=((((unsigned char)data[position+i])^Xor[XorPos+i])<<(i*8));
-	return read;
-}
 
 stats_tuple GetLvl40Stats(stats_tuple lvl1, stats_tuple growths)
 {
@@ -102,14 +91,14 @@ stats_tuple GetLvl40Stats(stats_tuple lvl1, stats_tuple growths)
 string actOnData(hsdarc_buffer buf, int num, const int Xor[], int XorSize, string (*a)(long long int ptr, char data[], const int Xor[], int XorSize))
 {
 	if(read_data_long(buf.data, buf.ptr_list[num], 8) == 0)
-        return a(buf.ptr_list[num] + 8, buf.data, Xor, XorSize);
+        return "None";
 	return a(read_data_long(buf.data, buf.ptr_list[num], 8) + 0x20, buf.data, Xor_Str, Xor_Str_Size);
 }
 
 string GetSkillXor(hsdarc_buffer buf, long long int ptr, const int Xor[], int XorSize, string (*a)(long long int ptr, char data[], const int Xor[], int XorSize))
 {
 	if(read_data_long(buf.data, ptr, 8) == 0)
-        return a(ptr, buf.data, Xor, XorSize);
+        return "\0";
 	return a(read_data_long(buf.data, ptr, 8) + 0x20, buf.data, Xor_Str, Xor_Str_Size);
 }
 
@@ -122,6 +111,11 @@ int GetHero(hsdarc_buffer buf, int num)
     cout<<"Internal Identifier: "<<strbuf<<endl;
     strbuf = actOnData(buf, num++, Xor_Str, Xor_Str_Size, GetStringXorred);
     cout<<"Romanized Identifier: "<<strbuf<<endl;
+    if(read_data_long(buf.data, buf.ptr_list[num-1] + 8, 8) == 0)
+    {
+        cout<<"----------------------------------------------------------------------------------------------------"<<endl;
+        return num;
+    }
     strbuf = actOnData(buf, num++, Xor_Str, Xor_Str_Size, GetStringXorred);
     cout<<"Face Folder: "<<strbuf<<endl;
     strbuf = actOnData(buf, num, Xor_Str, Xor_Str_Size, GetStringXorred);
@@ -141,6 +135,10 @@ int GetHero(hsdarc_buffer buf, int num)
     cout<<"Tome Element: "<<Tome_Elem[read_data_Xorred(buf.data, buf.ptr_list[num] + 0x21, Xor_Tome_Size, Xor_Tome, 0)]<<endl;
     cout<<"Movement Type: "<<Movement[read_data_Xorred(buf.data, buf.ptr_list[num] + 0x22, Xor_Move_Size, Xor_Move, 0)]<<endl;
     cout<<"Series: "<<Series[read_data_Xorred(buf.data, buf.ptr_list[num] + 0x23, Xor_Series_Size, Xor_Series, 0)]<<endl;
+	cout<<"Unknown: ";
+    for(int i=0; i<8; i++)
+		cout<<read_data_Xorred(buf.data, buf.ptr_list[num] + 0x10 + i, 1, Xor_Unknown, i)<< " ";
+	cout<<endl;
     if(read_data_Xorred(buf.data, buf.ptr_list[num] + 0x24, Xor_Special_Size, Xor_Special, 0) != 0)
         cout<<"Special Hero"<<endl;
     else
@@ -243,6 +241,6 @@ string PrintStats(stats_tuple Stats)
 unsigned char GetFirstChar(hsdarc_buffer buf, int num)
 {
 	if(read_data_long(buf.data, buf.ptr_list[num], 8) == 0)
-        return buf.data[buf.ptr_list[num]+8] ^ Xor_Str[0];
+        return '\0';
     return buf.data[read_data_long(buf.data, buf.ptr_list[num], 8) + 0x20] ^ Xor_Str[0];
 }

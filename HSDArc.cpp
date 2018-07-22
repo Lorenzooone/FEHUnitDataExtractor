@@ -40,13 +40,18 @@ hsdarc_buffer get_elements(char data[])
 
 string GetStringXorred(long long int ptr, char data[], const int Xor[], int XorSize)
 {
-    int size=0;
-	for(int i=0; data[ptr+i]!=0; i++)
-        size++;
 	string String;
-	for(int i=0; i<size; i++)
+	for(int i=0; data[ptr+i]!=0; i++)
     {
 		String += data[ptr+i] ^ Xor[i%XorSize];
 	}
 	return String;
+}
+
+int read_data_Xorred(char data[], int position, int size, const int Xor[], int XorPos)
+{
+    int read=0;
+	for(int i=0; i<size; i++)
+		read+=((((unsigned char)data[position+i])^Xor[XorPos+i])<<(i*8));
+	return read;
 }
