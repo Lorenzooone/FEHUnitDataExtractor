@@ -207,13 +207,13 @@ stats_tuple GetHeroGrowths(long long int ptr, char data[], const int Xor[])
 
 string readShortInt(short int tmp, string String)
 {
-		if(tmp > 10000)
+		if(tmp >= 10000)
 			String+=((tmp/10000)%10) + '0';
-		if(tmp > 1000)
+		if(tmp >= 1000)
 			String+=((tmp/1000)%10) + '0';
-		if(tmp > 100)
+		if(tmp >= 100)
 			String+=((tmp/100)%10) + '0';
-		if(tmp > 10)
+		if(tmp >= 10)
 			String+=((tmp/10)%10) + '0';
 		String+=(tmp%10) + '0';
 		return String;
