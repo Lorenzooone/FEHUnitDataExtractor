@@ -15,10 +15,6 @@ const int Xor_Stats[] = {
   0x32, 0xD6, 0xA0, 0x14, 0x5E, 0xA5, 0x66, 0x85,
   0xE5, 0xAE, 0x57, 0x64, 0x1A, 0x29, 0x59, 0x05};
 const int Xor_Stats_Size = 10;
-const int Xor_Info[] = {
-  0x06, 0x35, 0x2A, 0x43, 0xA0, 0xC7, 0x02, 0xFF,
-  0xBD};
-const int Xor_Info_Size = 9;
 const int Xor_Element[] = {
   0x05};
 const int Xor_Element_Size = 1;
@@ -40,9 +36,9 @@ const int Xor_Move_Size = 1;
 const int Xor_Series[] = {
   0x43};
 const int Xor_Series_Size = 1;
-const int Xor_Special[] = {
+const int Xor_Spawnable[] = {
   0xA0};
-const int Xor_Special_Size = 1;
+const int Xor_Spawnable_Size = 1;
 const int Xor_Permanent[] = {
   0xC7};
 const int Xor_Permanent_Size = 1;
@@ -139,10 +135,10 @@ int GetHero(hsdarc_buffer buf, int num)
     for(int i=0; i<8; i++)
 		cout<<read_data_Xorred(buf.data, buf.ptr_list[num] + 0x10 + i, 1, Xor_Unknown, i)<< " ";
 	cout<<endl;
-    if(read_data_Xorred(buf.data, buf.ptr_list[num] + 0x24, Xor_Special_Size, Xor_Special, 0) != 0)
-        cout<<"Special Hero"<<endl;
+    if(read_data_Xorred(buf.data, buf.ptr_list[num] + 0x24, Xor_Spawnable_Size, Xor_Spawnable, 0) != 0)
+        cout<<"Not Randomly Spawnable Hero"<<endl;
     else
-        cout<<"Normal Hero"<<endl;
+        cout<<"Randomly Spawnable Hero"<<endl;
     if(read_data_Xorred(buf.data, buf.ptr_list[num] + 0x25, Xor_Permanent_Size, Xor_Permanent, 0) != 0)
         cout<<"Permanent Hero"<<endl;
     else

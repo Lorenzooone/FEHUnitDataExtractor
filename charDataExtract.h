@@ -6,7 +6,7 @@ struct hero_info {
   unsigned char tome_element;
   unsigned char move_type;
   unsigned char series;
-  bool special_hero;
+  bool spawnable_hero;
   bool permanent_hero;
   unsigned char base_vector_id;
   bool refresher;
