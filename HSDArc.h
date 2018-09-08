@@ -24,3 +24,4 @@ long long int read_data_long(char data[], long long int position, int size);
 hsdarc_buffer get_elements(char data[]);
 std::string GetStringXorred(long long int ptr, char data[], const int Xor[], int XorSize);
 int read_data_Xorred(char data[], int position, int size, const int Xor[], int XorPos);
+long long int read_long_data_Xorred(char data[], int position, int size, const int Xor[], int XorPos);

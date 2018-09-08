@@ -55,3 +55,11 @@ int read_data_Xorred(char data[], int position, int size, const int Xor[], int X
 		read+=((((unsigned char)data[position+i])^Xor[XorPos+i])<<(i*8));
 	return read;
 }
+
+long long int read_long_data_Xorred(char data[], int position, int size, const int Xor[], int XorPos)
+{
+    long long int read=0;
+	for(int i=0; i<size; i++)
+		read+=((((unsigned char)data[position+i])^Xor[XorPos+i])<<(i*8));
+	return read;
+}

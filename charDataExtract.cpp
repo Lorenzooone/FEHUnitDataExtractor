@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string>
+#include<time.h>
 #include"HSDArc.h"
 #include"charDataExtract.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -8,9 +9,9 @@
 using namespace std;
 
 //Const declarations
-const int Xor_Unknown[] = {
-  0x64, 0xB7, 0x49, 0x16, 0xBD, 0x18, 0x3E, 0x42};
-const int Xor_Unknown_Size = 8;
+const int Xor_Timestamp[] = {
+  0x9B, 0x48, 0xB6, 0xE9, 0x42, 0xE7, 0xC1, 0xBD};
+const int Xor_Timestamp_Size = 8;
 const int Xor_Stats[] = {
   0x32, 0xD6, 0xA0, 0x14, 0x5E, 0xA5, 0x66, 0x85,
   0xE5, 0xAE, 0x57, 0x64, 0x1A, 0x29, 0x59, 0x05};
@@ -43,7 +44,7 @@ const int Xor_Permanent[] = {
   0xC7};
 const int Xor_Permanent_Size = 1;
 const int Xor_BVid[] = {
-  0x02};
+  0x3D};
 const int Xor_BVid_Size = 1;
 const int Xor_Refresher[] = {
   0xFF};
@@ -122,10 +123,12 @@ int GetHero(hsdarc_buffer buf, int num)
     cout<<"Tome Element: "<<Tome_Elem[read_data_Xorred(buf.data, buf.ptr_list[num] + 0x21, Xor_Tome_Size, Xor_Tome, 0)]<<endl;
     cout<<"Movement Type: "<<Movement[read_data_Xorred(buf.data, buf.ptr_list[num] + 0x22, Xor_Move_Size, Xor_Move, 0)]<<endl;
     cout<<"Series: "<<Series[read_data_Xorred(buf.data, buf.ptr_list[num] + 0x23, Xor_Series_Size, Xor_Series, 0)]<<endl;
-	cout<<"Unknown: ";
-    for(int i=0; i<8; i++)
-		cout<<read_data_Xorred(buf.data, buf.ptr_list[num] + 0x10 + i, 1, Xor_Unknown, i)<< " ";
-	cout<<endl;
+	time_t time = read_long_data_Xorred(buf.data, buf.ptr_list[num] + 0x10, Xor_Timestamp_Size, Xor_Timestamp, 0);
+	cout<<"Timestamp: ";
+	if(time>0)
+		cout<<ctime(&time);
+	else
+		cout<<"Not available"<<endl;
     if(read_data_Xorred(buf.data, buf.ptr_list[num] + 0x24, Xor_Spawnable_Size, Xor_Spawnable, 0) != 0)
         cout<<"Not Randomly Spawnable Hero"<<endl;
     else
