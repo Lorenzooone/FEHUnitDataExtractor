@@ -52,15 +52,6 @@ const int Xor_Dummy1[] = {
   0xBD};
 const int Xor_Dummy1_Size = 1;
 
-
-const int statGrowths[][13] = {
-    {6, 8, 9, 11, 13, 14, 16, 18, 19, 21, 23, 24, 26},
-    {7, 8, 10, 12, 14, 15, 17, 19, 21, 23, 25, 26, 28},
-    {7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31},
-    {8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 31, 33},
-    {8, 10, 13, 15, 17, 19, 22, 24, 26, 28, 30, 33, 35}
-};
-
 const unsigned char Skills[][20] = {"Default Weapon: ", "Default Assist: ", "Default Special: ", "Unknown: ", "Unknown: ", "Unknown: ", "Unlocked Weapon: ", "Unlocked Assist: ",
   "Unlocked Special: ", "Passive A: ", "Passive B: ", "Passive C: ", "Unknown: ", "Unknown: "};
 const unsigned char Legendary[][6] = {"Fire", "Water", "Wind", "Earth"};
@@ -76,11 +67,11 @@ const unsigned char Series[][105] = {"Heroes", "Shadow Dragon and the Blade of L
 stats_tuple GetLvl40Stats(stats_tuple lvl1, stats_tuple growths)
 {
 	stats_tuple stats=lvl1;
-    stats.hp += statGrowths[4][growths.hp];
-    stats.atk += statGrowths[4][growths.atk];
-    stats.spd += statGrowths[4][growths.spd];
-    stats.def += statGrowths[4][growths.def];
-    stats.res += statGrowths[4][growths.res];
+    stats.hp += static_cast<int>(0.39 * static_cast<int>(growths.hp * 1.14 + 0.005) + 0.005);
+    stats.atk += static_cast<int>(0.39 * static_cast<int>(growths.atk * 1.14 + 0.005) + 0.005);
+    stats.spd += static_cast<int>(0.39 * static_cast<int>(growths.spd * 1.14 + 0.005) + 0.005);
+    stats.def += static_cast<int>(0.39 * static_cast<int>(growths.def * 1.14 + 0.005) + 0.005);
+    stats.res += static_cast<int>(0.39 * static_cast<int>(growths.res * 1.14 + 0.005) + 0.005);
 	return stats;
 }
 
@@ -153,7 +144,7 @@ int GetHero(hsdarc_buffer buf, int num)
     cout<<"5 Stars Level 1 Stats: "<<strbuf<<endl;
     stats_tuple hero_growths = GetHeroGrowths(buf.ptr_list[num] + 0x40, buf.data, Xor_Stats);
     strbuf = PrintStats(hero_growths);
-    cout<<"Growth Points: "<<strbuf<<endl;
+    cout<<"Growth Rates: "<<strbuf<<endl;
 	stats_tuple level40stats = GetLvl40Stats(base_stats, hero_growths);
     strbuf = PrintStats(level40stats);
     cout<<"5 Stars Level 40 Stats: "<<strbuf<<endl;
@@ -191,17 +182,18 @@ stats_tuple GetHeroStats(long long int ptr, char data[], const int Xor[], int ad
     stats.dummy3 = read_data_Xorred(data, ptr + 14, 2, Xor, 14) + addition;
 	return stats;
 }
+
 stats_tuple GetHeroGrowths(long long int ptr, char data[], const int Xor[])
 {
 	stats_tuple stats;
-    stats.hp = (read_data_Xorred(data, ptr, 2, Xor, 0) - 20) / 5;
-    stats.atk = (read_data_Xorred(data, ptr + 2, 2, Xor, 2) - 20) / 5;
-    stats.spd = (read_data_Xorred(data, ptr + 4, 2, Xor, 4) - 20) / 5;
-    stats.def = (read_data_Xorred(data, ptr + 6, 2, Xor, 6) - 20) / 5;
-    stats.res = (read_data_Xorred(data, ptr + 8, 2, Xor, 8) - 20) / 5;
-    stats.dummy1 = (read_data_Xorred(data, ptr + 10, 2, Xor, 10) - 20) / 5;
-    stats.dummy2 = (read_data_Xorred(data, ptr + 12, 2, Xor, 12) - 20) / 5;
-    stats.dummy3 = (read_data_Xorred(data, ptr + 14, 2, Xor, 14) - 20) / 5;
+    stats.hp = read_data_Xorred(data, ptr, 2, Xor, 0);
+    stats.atk = read_data_Xorred(data, ptr + 2, 2, Xor, 2);
+    stats.spd = read_data_Xorred(data, ptr + 4, 2, Xor, 4);
+    stats.def = read_data_Xorred(data, ptr + 6, 2, Xor, 6);
+    stats.res = read_data_Xorred(data, ptr + 8, 2, Xor, 8);
+    stats.dummy1 = read_data_Xorred(data, ptr + 10, 2, Xor, 10);
+    stats.dummy2 = read_data_Xorred(data, ptr + 12, 2, Xor, 12);
+    stats.dummy3 = read_data_Xorred(data, ptr + 14, 2, Xor, 14);
 	return stats;
 }
 
