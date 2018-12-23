@@ -55,7 +55,7 @@ const int Xor_Dummy1_Size = 1;
 
 const unsigned char Skills[][20] = {"Default Weapon: ", "Default Assist: ", "Default Special: ", "Unknown: ", "Unknown: ", "Unknown: ", "Unlocked Weapon: ", "Unlocked Assist: ",
   "Unlocked Special: ", "Passive A: ", "Passive B: ", "Passive C: ", "Unknown: ", "Unknown: "};
-const unsigned char Legendary[][6] = {"Fire", "Water", "Wind", "Earth"};
+const unsigned char Legendary[][7] = {"Fire", "Water", "Wind", "Earth", "Light", "Dark", "Astra", "Anima"};
 const unsigned char Weapons[][20] = {"Red Sword", "Blue Lance", "Green Axe", "Red Bow", "Blue Bow", "Green Bow", "Colorless Bow",  "Red Dagger", "Blue Dagger", "Green Dagger", "Colorless Dagger", "Red Tome",
   "Blue Tome", "Green Tome", "Colorless Staff", "Red Breath", "Blue Breath", "Green Breath", "Colorless Breath"};
 const unsigned char Tome_Elem[][8] = {"None", "Fire", "Thunder", "Wind", "Light", "Dark"};
